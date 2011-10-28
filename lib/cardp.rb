@@ -32,3 +32,5 @@ psuedocode = <<-___ENDCODE
     
 ___ENDCODE
 
+def parse data
+end

@@ -34,3 +34,12 @@ ___ENDCODE
 
 def parse data
 end
+
+def total_by_first rows
+end
+
+def accumulate_by_first groups_by_id, row
+  old_group = groups_by_id[row[0]] || [0]*row.length
+  groups_by_id[row[0]] = old_group .zip([1]+row[1..-1]) .map {|a,b|a+b}
+  groups_by_id
+end

@@ -36,10 +36,26 @@ def parse data
 end
 
 def total_by_first rows
+  rows.inject({}) {|groups_by_id, row| accumulate_by_first(groups_by_id ,row)}
 end
 
 def accumulate_by_first groups_by_id, row
   old_group = groups_by_id[row[0]] || [0]*row.length
   groups_by_id[row[0]] = old_group .zip([1]+row[1..-1]) .map {|a,b|a+b}
   groups_by_id
+end
+
+def card_present_ratios_for_both_spending_buckets groups_by_id
+  lt100s = []; gt100s = []
+  groups_by_id.each_value do |total_count, total_payment_amount, card_present_count|
+    card_present_ratio = Float(card_present_count)/total_count
+    (total_payment_amount<100 ? lt100s : gt100s) << card_present_ratio
+  end
+  [lt100s, gt100s]
+end
+
+def everything
+  groups_by_id = total_by_first(parse(data))
+  card_present_ratios_for_both_spending_buckets groups_by_id
+  arrayize_and_enratio(groups_by_id).sort
 end

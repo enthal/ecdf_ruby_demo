@@ -29,4 +29,10 @@ describe 'cardp' do
     it { unscaled_ecdf(4, [0.1, 0.3,0.4,0.45,0.5, 0.55,0.67, 0.85]).should == [1,5,7,8] }
   end
   
+  describe '#ratio_map' do
+    it { ratio_map(10,[0,1,5,10]).should == [0,0.1,0.5,1]}
+    it { ratio_map(5,[2]).should == [2.0/5]}
+    it { ratio_map(nil,[]).should == []}
+  end
+  
 end

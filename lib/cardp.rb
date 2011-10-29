@@ -52,6 +52,14 @@ def unscaled_ecdf interval_count, sorted_ratios
   }
 end
 
+def ratio_map denomitator, values
+  values.map { |v| v / denomitator.to_f }
+end
+
+def ecdf interval_count, sorted_ratios
+  ratio_map sorted_ratios.size, unscaled_ecdf(interval_count, sorted_ratios)
+end
+
 def everything
   groups_by_id = total_by_first(parse(data))
   card_present_ratios_for_both_spending_buckets(groups_by_id).each do |spending_bucket|

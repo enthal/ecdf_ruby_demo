@@ -36,7 +36,7 @@ def parse data
 end
 
 def total_by_first rows
-  rows.inject({}) {|groups_by_id, row| accumulate_by_first(groups_by_id ,row)}
+  rows.reduce({}) { |groups_by_id, row| accumulate_by_first(groups_by_id ,row) }
 end
 
 def accumulate_by_first groups_by_id, row
@@ -57,5 +57,4 @@ end
 def everything
   groups_by_id = total_by_first(parse(data))
   card_present_ratios_for_both_spending_buckets groups_by_id
-  arrayize_and_enratio(groups_by_id).sort
 end

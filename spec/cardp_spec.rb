@@ -18,7 +18,7 @@ describe 'cardp' do
   
   describe '#card_present_ratios_for_both_spending_buckets' do
     it { card_present_ratios_for_both_spending_buckets(
-      {1=>[9,1,7],2=>[17,999,13],3=>[23,1,19]} ).should == [[7.0/9,19.0/23], [13.0/17]] }
+      {1=>[9,99,7],2=>[17,101,13],3=>[23,99,19]} ).should == [[7.0/9,19.0/23], [13.0/17]] }
   end
   
 end

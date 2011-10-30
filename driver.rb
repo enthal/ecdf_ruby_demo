@@ -1,16 +1,7 @@
 require './lib/cardp'
 require './lib/distributions'
+require './lib/util'
 
-
-def optify opts={}, defaults={}
-  unrecognized_opts = opts.keys - defaults.keys
-  unless unrecognized_opts.empty?
-    raise "Unrecognized opts: #{unrecognized_opts.join(', ')} (allowed: #{defaults.keys.join(', ')})"
-  end
-  
-  opts = Hash[defaults].update opts
-  Struct.new(*opts.keys).new(*opts.values)
-end
 
 class Demo
   include Enumerable
@@ -30,6 +21,7 @@ class Demo
     @opts.n_payments.times { yield data_row }
   end
 end
+
 
 demo = Demo.new(n_users:3000, n_payments:500000, stddev:0.1)
 ecdf_for_triples(30, demo).each {|vs| puts "===="; puts vs.join("\n")}

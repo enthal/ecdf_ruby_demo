@@ -6,6 +6,7 @@ def simple_gaussian mean, stddev
   scale = stddev * rho
   mean + scale * Math.sin(theta)
 end
+
 def gaussian_probability_distribution count, stddev
   (0..count).map { v = simple_gaussian(0.5, stddev) until (0..1).include? v; v }
 end

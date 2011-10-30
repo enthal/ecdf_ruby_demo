@@ -42,7 +42,7 @@ def card_present_ratios_for_both_spending_buckets groups_by_id
   end
   [lt100s, gt100s]
 end
-
+ 
 def unscaled_ecdf interval_count, sorted_ratios
   interval_thresholds = (1..interval_count).map{ |i| i / interval_count.to_f }
   interval_thresholds.map { |interval_threshold|
@@ -60,9 +60,10 @@ def ecdf interval_count, sorted_ratios
   ratio_map sorted_ratios.size, unscaled_ecdf(interval_count, sorted_ratios)
 end
 
-def everything
-  groups_by_id = total_by_first(parse(data))
-  card_present_ratios_for_both_spending_buckets(groups_by_id).each do |spending_bucket|
-    print_results(ecdf(spending_bucket.sort!))
+def ecdf_for_triples interval_count, triples
+  groups_by_id = total_by_first(triples)
+  card_present_ratios_for_both_spending_buckets(groups_by_id).map do |spending_bucket|
+    ecdf(interval_count, spending_bucket.sort!)
   end
 end
+ 

@@ -1,3 +1,4 @@
+# Copyright © 2011 Timothy James; All rights reserved
 
 def optify opts={}, defaults={}
   unrecognized_opts = opts.keys - defaults.keys

@@ -1,3 +1,4 @@
+# Copyright © 2011 Timothy James; All rights reserved
 require './lib/cardp'
 require './lib/distributions'
 require './lib/util'

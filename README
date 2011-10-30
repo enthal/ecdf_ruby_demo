@@ -1,4 +1,7 @@
-A SOLUTION FOR:
+A SOLUTION FOR AN ECDF PROBLEM.
+Copyright © 2011 Timothy James; All rights reserved
+Runs on Ruby 1.9.2
+
 
 Suppose you have multiple large files (on the order of 100GBs) containing tuples of the following form: 
 

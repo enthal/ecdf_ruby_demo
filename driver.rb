@@ -29,4 +29,4 @@ end
 
 
 demo = Demo.new(n_users:3000, n_payments:50000, stddev:0.15)
-ecdf_for_triples(30, demo).each {|vs| puts "===="; puts vs.join("\n")}
+ecdf_for_triples(30, demo).each {|vs| puts "===="; puts vs.map{|v|(v*100).to_i}.join("\n")}

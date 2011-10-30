@@ -27,6 +27,26 @@ class Demo
   end
 end
 
+def format_ecdf_as_required ecdf_vector
+  # honest (perCENTile) only if ecdf_vector.size=100
+  puts "percentile    % cp"
+  ecdf_vector.each_with_index do |ratio_cp, i|
+    percent_cp = (ratio_cp*100).to_i
+    puts "#{i+1}\t      #{percent_cp}"
+  end
+end
 
-demo = Demo.new(n_users:3000, n_payments:50000, stddev:0.15)
-ecdf_for_triples(30, demo).each {|vs| puts "===="; puts vs.map{|v|(v*100).to_i}.join("\n")}
+def do_all_as_required 
+  demo = Demo.new(n_users:3000, n_payments:50000, stddev:0.15)
+  lt100s, gt100s = ecdf_for_triples(100, demo)
+  
+  # Slavish and probably unneccesary devotion to output format stated in challenge
+  
+  puts "Users who processed less than $100"
+  format_ecdf_as_required lt100s
+
+  puts "\nUsers who processed over $100"
+  format_ecdf_as_required gt100s
+end
+
+do_all_as_required

@@ -1,4 +1,4 @@
-require 'types'
+require 'card_pres'
 
 describe 'CardPres' do
 

@@ -1,5 +1,5 @@
 # Copyright © 2011 Timothy James; All rights reserved
-require 'types'
+require 'card_pres'
 
 class Parser
   include Enumerable

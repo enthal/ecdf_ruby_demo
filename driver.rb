@@ -38,7 +38,7 @@ end
 
 def do_all_as_required 
   demo = Demo.new(n_users:3000, n_payments:50000, stddev:0.15)
-  lt100s, gt100s = ecdf_for_triples(100, demo)
+  lt100s, gt100s = ecdfs_for_triples(100, demo)
   
   # Slavish and probably unneccesary devotion to output format stated in challenge
   

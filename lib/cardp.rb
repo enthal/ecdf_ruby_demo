@@ -4,7 +4,7 @@ def parse data
 end
 
 def total_by_first rows
-  rows.reduce({}) { |groups_by_id, row| accumulate_by_first(groups_by_id ,row) }
+  rows.reduce({}) { |groups_by_id, row| accumulate_by_first(groups_by_id, row) }
 end
 
 def accumulate_by_first groups_by_id, row
@@ -16,7 +16,7 @@ end
 def card_present_ratios_for_both_spending_buckets groups_by_id
   lt100s = []; gt100s = []
   groups_by_id.each_value do |total_count, total_payment_amount, card_present_count|
-    card_present_ratio = Float(card_present_count)/total_count
+    card_present_ratio = card_present_count/total_count.to_f
     (total_payment_amount<100 ? lt100s : gt100s) << card_present_ratio
   end
   [lt100s, gt100s]
@@ -39,7 +39,7 @@ def ecdf interval_count, sorted_ratios
   ratio_map sorted_ratios.size, unscaled_ecdf(interval_count, sorted_ratios)
 end
 
-def ecdf_for_triples interval_count, triples
+def ecdfs_for_triples interval_count, triples
   groups_by_id = total_by_first(triples)
   card_present_ratios_for_both_spending_buckets(groups_by_id).map do |spending_bucket|
     ecdf(interval_count, spending_bucket.sort!)

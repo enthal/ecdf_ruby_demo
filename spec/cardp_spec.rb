@@ -2,10 +2,6 @@
 require 'cardp'
 
 describe 'cardp' do
-  describe '#parse' do
-    it { parse '' }
-    # it { parse("\na x 3 1 x\nb x 4 0 x\n").should == [['a',3,1],['b',4,0]] }
-  end
   
   describe '#total_by_first' do
     it { total_by_first([[3,300,1], [5,400,0], [3,10,0], [3,4,1]]).should == {3=>[3,314,2], 5=>[1,400,0]} }

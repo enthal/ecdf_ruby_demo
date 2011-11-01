@@ -22,4 +22,8 @@ describe 'CardPres' do
     
   end
   
+  describe '.from_raw_input_line' do
+    it { CardPres.from_raw_input_line(" user , p, 123.45, 1, c\n").should == CardPres.new("user",1,123.45,1) }
+  end
+  
 end

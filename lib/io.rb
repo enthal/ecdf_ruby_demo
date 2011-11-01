@@ -1,4 +1,5 @@
 # Copyright © 2011 Timothy James; All rights reserved
+require 'types'
 
 class Parser
   include Enumerable
@@ -13,10 +14,7 @@ class Parser
       line.strip!
       unless line.empty?
         begin
-          line_parts = line.split(/ *, */)
-          raise unless line_parts.size == 5
-          user_id, payment_id, payment_amount, is_card_present, created_at = line_parts
-          yield [user_id, payment_amount.to_f, is_card_present.to_i]
+          yield CardPres.from_raw_input_line line
         rescue
           puts "Ignoring line: #{line}" unless @quiet
         end

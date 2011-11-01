@@ -10,6 +10,13 @@ class CardPres < Struct.new( "CardPresStruct",
       card_present_count.to_i    )
   end
   
+  def self.from_raw_input_line line
+    line_parts = line.split(/ *, */).map{|part|part.strip}
+    raise "Bad raw line (need 5 parts): #{line}" unless line_parts.size == 5
+    user_id, payment_id, payment_amount, is_card_present, created_at = line_parts
+    CardPres.new(user_id, 1, payment_amount, is_card_present)
+  end
+
 end
 
 

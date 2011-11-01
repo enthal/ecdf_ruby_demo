@@ -1,4 +1,5 @@
 # Copyright © 2011 Timothy James; All rights reserved
+require 'types'
 
 def total_by_first rows
   rows.reduce({}) { |groups_by_id, row| accumulate_by_first(groups_by_id, row) }

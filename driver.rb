@@ -40,11 +40,14 @@ class Driver
     # honest (perCENTile) only if ecdf_vector.size=100
     puts "percentile    % cp"
     ecdf_vector.each_with_index do |ratio_cp, i|
-      percent_cp = (ratio_cp*100).to_i
+      begin
+        percent_cp = (ratio_cp*100).to_i
+      rescue FloatDomainError
+        puts "EMPTY SPENDING BUCKET"  # happens when no users fall into this spending bucket
+        return
+      end
       puts "#{i+1}\t      #{percent_cp}"
     end
-  rescue
-    puts "EMPTY SPENDING BUCKET"
   end
 end
 

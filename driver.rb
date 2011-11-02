@@ -7,9 +7,9 @@ require 'io'
 
 def main
   opts = cull_argv_opts
-  start_opts = optify opts, mode:'all', source:(ARGV.empty? ? :gaussian : :file)
+  start_opts = optify opts, output:'all', source:(ARGV.empty? ? :gaussian : :file)
   
-  card_preses = case start_opts[:source].to_sym
+  card_preses = case start_opts.source
     when :gaussian
       GaussianCardPresEnumerator.new opts
     when :file

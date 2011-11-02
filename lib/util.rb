@@ -11,6 +11,8 @@ class String
     return case other
     when String
       self
+    when Symbol
+      to_sym
     when Integer
       to_i
     when Float

@@ -19,10 +19,16 @@ describe 'util' do
 
   describe String do
     describe '#convert_to_type_of' do
-      it {   '2'.convert_to_type_of(1).should == 2 }
       it {   'a'.convert_to_type_of('b').should == 'a' }
+      
+      it {   'a'.convert_to_type_of(:b).should == :a }
+      
+      it {   '2'.convert_to_type_of(1).should == 2 }
       it {   '2'.convert_to_type_of(1.0).should == 2.0 }
       it { '2.1'.convert_to_type_of(1.0).should == 2.1 }
+      
+      it { 'false'.convert_to_type_of(true) .should == false }
+      it { 'true' .convert_to_type_of(false).should == true }
     end
   end
   

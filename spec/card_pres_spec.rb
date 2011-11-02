@@ -1,3 +1,4 @@
+# Copyright © 2011 Timothy James; All rights reserved
 require 'card_pres'
 
 describe 'CardPres' do
@@ -55,18 +56,6 @@ describe 'CardPres' do
     it "aggregates CardPres objects, summing fields where user_id matches" do
       cpag << cp1b << cp2a
       cpag.map{|cp|cp.to_a}.should == [[1,10,3.3,16], [2,13,0.1,17]]
-    end
-    
-    describe '#card_present_ratios_for_both_spending_buckets' do
-      let (:cpag1) { CardPres::Aggregator.new }
-      before do
-        cpag1 << 
-          CardPres.new(1,9,99,7) << 
-          CardPres.new(2,17,101,13) << 
-          CardPres.new(3,23,99,19)
-      end
-      
-      it { cpag1.card_present_ratios_for_both_spending_buckets.map{|x|x.to_a.sort}.should == [[7.0/9, 19.0/23], [13.0/17]] }
     end
   end
 end

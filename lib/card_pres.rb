@@ -1,3 +1,4 @@
+# Copyright © 2011 Timothy James; All rights reserved
 
 class CardPres < Struct.new( "CardPresStruct",
     :user_id, :total_count, :total_payment_amount, :card_present_count )
@@ -40,12 +41,6 @@ class CardPres < Struct.new( "CardPresStruct",
     def << card_pres
       @values_by_user_id[card_pres.user_id] << card_pres
       self
-    end
-    
-    # This might not be appropriate here, but with only the single given requirement 
-    # there is no basis by which to divide out general and specific.
-    def card_present_ratios_for_both_spending_buckets
-      self.partition{|cp| cp.total_payment_amount < 100}.map{|bucket| bucket.map &:card_present_ratio} 
     end
   end
 end

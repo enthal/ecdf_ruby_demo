@@ -18,13 +18,13 @@ class GaussianCardPresEnumerator
   private
   
   def data_row
-    # user_id, payment_amount, is_card_present
     user_id = rand(@opts.n_users)
-    [
+    CardPres.new(
       user_id,
+      1,
       rand(user_id/@opts.n_users.to_f*300 * (@opts.n_users/@opts.n_payments.to_f)),
-      (rand > @user_card_probabilities[user_id])? 1:0,
-    ]
+      (rand > @user_card_probabilities[user_id]) ? 1 : 0,
+    )
   end
   
 end

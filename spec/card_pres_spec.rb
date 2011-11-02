@@ -1,7 +1,7 @@
 # Copyright © 2011 Timothy James; All rights reserved
 require 'card_pres'
 
-describe 'CardPres' do
+describe CardPres do
 
   describe '#initialize' do
     
@@ -34,6 +34,14 @@ describe 'CardPres' do
   
   describe '#to_raw_input_line' do
     it { CardPres.new("user",1,123.45,1).to_raw_input_line().should == "user, _, 123.45, 1, _" }
+  end
+
+  describe '.from_csv_line' do
+    it { CardPres.from_csv_line(" user , 1, 123.45, 1\n").should == CardPres.new("user",1,123.45,1) }
+  end
+  
+  describe '#to_csv_line' do
+    it { CardPres.new("user",7,123.45,9).to_csv_line().should == "user, 7, 123.45, 9" }
   end
   
   let (:cp1a) { CardPres.new(1,  3, 1.3,  5) }

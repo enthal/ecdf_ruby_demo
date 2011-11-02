@@ -24,6 +24,13 @@ class CardPres < Struct.new( "CardPresStruct",
     "#{self.user_id}, _, #{self.total_payment_amount}, #{self.card_present_count}, _"
   end
   
+  def self.from_csv_line line
+    CardPres.new(*line.split(/ *, */).map{|part|part.strip})
+  end
+  def to_csv_line
+    to_a.join(', ')
+  end
+  
   def << other
     raise "user_id mismatch (#{user_id} != #{other.user_id})" if self.user_id != other.user_id
     (1...self.size).each { |i| self[i] += other[i] }

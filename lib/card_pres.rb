@@ -16,7 +16,31 @@ class CardPres < Struct.new( "CardPresStruct",
     user_id, payment_id, payment_amount, is_card_present, created_at = line_parts
     CardPres.new(user_id, 1, payment_amount, is_card_present)
   end
-
+  
+  def << other
+    raise "user_id mismatch (#{user_id} != #{other.user_id})" if self.user_id != other.user_id
+    self.total_count          += other.total_count
+    self.total_payment_amount += other.total_payment_amount
+    self.card_present_count   += other.card_present_count
+    self
+  end
+  
+  class Aggregator
+    include Enumerable
+    
+    def initialize
+      @values_by_user_id = Hash.new { |h,k| h[k] = CardPres.new(k,0,0,0) }
+    end
+    
+    def each
+      @values_by_user_id.each_value { |x| yield x }
+    end
+    
+    def << card_pres
+      @values_by_user_id[card_pres.user_id] << card_pres
+      self
+    end
+  end
 end
 
 

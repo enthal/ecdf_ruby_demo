@@ -41,6 +41,18 @@ class CardPres < Struct.new( "CardPresStruct",
       @values_by_user_id[card_pres.user_id] << card_pres
       self
     end
+    
+    # This might not be appropriate here, but with only the single given requirement 
+    # there is no basis by which to divide out general and specific.
+    def card_present_ratios_for_both_spending_buckets
+      [true,false].map do |whether| 
+        Enumerator.new do |y|
+          self.each do |cp| 
+            y << cp.card_present_ratio if whether == cp.total_payment_amount < 100
+          end
+        end
+      end
+    end
   end
 end
 

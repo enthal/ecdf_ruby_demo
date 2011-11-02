@@ -15,16 +15,14 @@ def format_ecdf_as_required ecdf_vector
 end
 
 def do_all_as_required 
-  card_preses = GaussianCardPresEnumerator.new(n_users:3000, n_payments:50000, stddev:0.15)
-  card_pres_aggregator = CardPres::Aggregator.new
-  card_preses.each{|cp| card_pres_aggregator << cp}
+  card_pres_enum = GaussianCardPresEnumerator.new(n_users:3000, n_payments:50000, stddev:0.15)
+  card_pres_aggregator = CardPres::Aggregator.new card_pres_enum
+  
   lt100s, gt100s = ecdfs_per_spending_bucket_for_card_preses(100, card_pres_aggregator)
   
   # Slavish and probably unneccesary devotion to output format stated in challenge
-  
   puts "Users who processed less than $100"
   format_ecdf_as_required lt100s
-
   puts "\nUsers who processed over $100"
   format_ecdf_as_required gt100s
 end

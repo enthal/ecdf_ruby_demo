@@ -30,8 +30,9 @@ class CardPres < Struct.new( "CardPresStruct",
   class Aggregator
     include Enumerable
     
-    def initialize
+    def initialize card_preses=[]
       @values_by_user_id = Hash.new { |h,k| h[k] = CardPres.new(k,0,0,0) }
+      card_preses.each{|cp| self << cp}
     end
     
     def each

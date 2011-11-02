@@ -52,6 +52,10 @@ describe 'CardPres' do
     it "accepts a CardPres" do
       cpag.first.should == cp1a
     end
+
+    it "#initialize with CPs" do
+      CardPres::Aggregator.new([cp1a, cp2a]).entries.should == [cp1a, cp2a]
+    end
     
     it "aggregates CardPres objects, summing fields where user_id matches" do
       cpag << cp1b << cp2a

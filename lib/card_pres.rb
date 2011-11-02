@@ -45,13 +45,7 @@ class CardPres < Struct.new( "CardPresStruct",
     # This might not be appropriate here, but with only the single given requirement 
     # there is no basis by which to divide out general and specific.
     def card_present_ratios_for_both_spending_buckets
-      [true,false].map do |whether| 
-        Enumerator.new do |y|
-          self.each do |cp| 
-            y << cp.card_present_ratio if whether == cp.total_payment_amount < 100
-          end
-        end
-      end
+      self.partition{|cp| cp.total_payment_amount < 100}.map{|bucket| bucket.map &:card_present_ratio} 
     end
   end
 end

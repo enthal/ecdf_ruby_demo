@@ -19,17 +19,20 @@ class Driver
         Parser.new ARGF
     end
     
-    if opts.action == :dump
-      opts = optify @opts, dump_file:'dump.csv'
-      File.open(opts.dump_file, 'w') do |dump_file|
-        card_preses.each do |cp|
-          dump_file.puts cp.to_raw_input_line
+    case opts.action
+      
+      when :dump
+        opts = optify @opts, dump_file:'dump.csv'
+        File.open(opts.dump_file, 'w') do |dump_file|
+          card_preses.each do |cp|
+            dump_file.puts cp.to_raw_input_line
+          end
         end
-      end
-      return
+      
+      else
+        output_ecdfs_for_lt100s_gt100s *(ecdfs_per_spending_bucket_for_raw_card_preses card_preses)
     end
     
-    output_ecdfs_for_lt100s_gt100s *(ecdfs_per_spending_bucket_for_raw_card_preses card_preses)
   end
 
   def ecdfs_per_spending_bucket_for_raw_card_preses raw_card_preses

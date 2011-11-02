@@ -16,8 +16,8 @@ def cull_argv_opts argv=ARGV
   
   argv.each do |arg|
     if arg.include? '='
-      k,v = arg.split '=', 2
-      opts.store k.strip.to_sym, v
+      k,v = arg.split('=', 2)
+      opts.store(k.strip.to_sym, v)
     else
       new_argv << arg
     end

@@ -7,6 +7,11 @@ class Parser
   def initialize lines, quiet=false
     @lines = lines
     @quiet = quiet
+    @line_parse_method = :from_raw_input_line
+  end
+  
+  def use_aggregated_input
+    @line_parse_method = :from_csv_line
   end
   
   def each
@@ -14,7 +19,7 @@ class Parser
       line.strip!
       unless line.empty?
         begin
-          yield CardPres.from_raw_input_line line
+          yield CardPres.send(@line_parse_method, line)
         rescue
           puts "Ignoring line: #{line}" unless @quiet
         end

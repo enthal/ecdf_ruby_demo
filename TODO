@@ -1,12 +1,12 @@
 
 
 - DONE use a class/struct for the triple
-- command line launching
-  - write random demo data file
+- DONE command line launching
+  - DONE write random demo data file
   - DONE run with file or random data
 - new modes: 
-  - write reduced data to file
-  - read reduced data, re-reduce and ecdf
+  - DONE write aggregated data to file
+  - DONE read aggregated data, re-aggregate and ecdf
 
 
 - PIG

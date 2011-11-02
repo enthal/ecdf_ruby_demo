@@ -12,33 +12,44 @@ class Driver
   def run
     opts = optify @opts, action: :all, source:(ARGV.empty? ? :gaussian : :file)
   
-    card_preses = case opts.source
+    case opts.source
       when :gaussian
-        GaussianCardPresEnumerator.new @opts
+        card_preses = GaussianCardPresEnumerator.new @opts
       when :file
-        Parser.new ARGF
-    end
-    
-    case opts.action
-      
-      when :dump
-        opts = optify @opts, dump_file:'dump.csv'
-        File.open(opts.dump_file, 'w') do |dump_file|
-          card_preses.each do |cp|
-            dump_file.puts cp.to_raw_input_line
-          end
+        card_preses = Parser.new ARGF
+        if [:finish, :reaggregate].include? opts.action
+          card_preses.use_aggregated_input
         end
-      
-      else
-        output_ecdfs_for_lt100s_gt100s *(ecdfs_per_spending_bucket_for_raw_card_preses card_preses)
     end
     
+    if [:all, :aggregate, :reaggregate, :finish].include? opts.action
+      card_preses = CardPres::Aggregator.new card_preses
+    end
+    
+    if [:dump, :aggregate, :reaggregate].include? opts.action
+      opts2 = optify @opts, outfile:(:dump==opts.action ? 'raw' : 'aggregate')+'.csv'
+      write_card_preses card_preses, opts2.outfile, (:dump==opts.action ? :to_raw_input_line : :to_csv_line)
+      return
+    end
+    
+    if [:all, :finish].include? opts.action
+      opts = optify @opts, percentiles:100
+      lt100s, gt100s = ecdfs_per_spending_bucket_for_aggregate_card_preses opts.percentiles, card_preses
+      output_ecdfs_for_lt100s_gt100s lt100s, gt100s
+      return
+    end
+    
+    raise "INVALID action (#{opts.action}); must one of: all, dump, aggregate, reaggregate, finish"
   end
-
-  def ecdfs_per_spending_bucket_for_raw_card_preses raw_card_preses
-    opts = optify @opts, percentiles:100
-    aggregate_card_preses = CardPres::Aggregator.new raw_card_preses
-    lt100s, gt100s = ecdfs_per_spending_bucket_for_aggregate_card_preses opts.percentiles, aggregate_card_preses
+  
+  def write_card_preses card_preses, output_filename, method
+    puts "Writing to #{output_filename} ..."
+    File.open(output_filename, 'w') do |output_file|
+      card_preses.each do |cp|
+        output_file.puts cp.send(method)
+      end
+    end
+    puts "DONE!"
   end
 
   def output_ecdfs_for_lt100s_gt100s lt100s, gt100s
@@ -54,6 +65,7 @@ class Driver
     
     # honest (perCENTile) only if ecdf_vector.size=100
     puts "percentile    % cp"
+    
     ecdf_vector.each_with_index do |ratio_cp, i|
       begin
         percent_cp = (ratio_cp*100).to_i

@@ -30,7 +30,7 @@ def optify opts, defaults
     v = String===opts[k] ? opts[k].convert_to_type_of(v) : opts[k]  if opts.include? k
     [k, v]
     } ]
-  opts.delete_if {|k,v| accepted_opts.include? k}
+  # opts.delete_if {|k,v| accepted_opts.include? k}
   Struct.new(*accepted_opts.keys).new(*accepted_opts.values)
 end
 

@@ -13,7 +13,6 @@ describe 'util' do
     it 'culls given or defaulted opts for keys in defaults' do
       opts = {a:'9',b:'7.1',d:333,s:'S',z:'xx'}
       optify(opts, {a:1,b:2.0,c:3.0,d:0,s:'ssss'}).to_hash.should == {a:9,b:7.1,c:3.0,d:333,s:'S'}
-      opts.should == {z:'xx'}
     end
   end
 

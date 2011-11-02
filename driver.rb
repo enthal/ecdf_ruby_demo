@@ -50,6 +50,8 @@ class Driver
   end
 
   def format_ecdf_as_required ecdf_vector
+    opts = optify @opts, graph:false
+    
     # honest (perCENTile) only if ecdf_vector.size=100
     puts "percentile    % cp"
     ecdf_vector.each_with_index do |ratio_cp, i|
@@ -59,6 +61,8 @@ class Driver
         puts "EMPTY SPENDING BUCKET"  # happens when no users fall into this spending bucket
         return
       end
+      percent_cp = '*'*percent_cp if opts.graph
+      
       puts "#{i+1}\t      #{percent_cp}"
     end
   end

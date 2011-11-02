@@ -20,6 +20,11 @@ describe 'CardPres' do
       it { cpa.user_id.should_not == '1234' }
     end
     
+    describe 'with Integer user_id' do
+      let (:cpa) {CardPres.new(1234,1,1.3,4)}
+      it { cpa.user_id.should == 1234 }
+    end
+    
   end
   
   describe '.from_raw_input_line' do

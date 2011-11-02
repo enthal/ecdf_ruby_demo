@@ -1,6 +1,8 @@
 
 
 def simple_gaussian mean, stddev
+  # simplification of http://stackoverflow.com/questions/5825680/code-to-generate-gaussian-normally-distributed-random-numbers-in-ruby/6178290#6178290
+  
   theta = 2 * Math::PI * rand
   rho = Math.sqrt(-2 * Math.log(1 - rand))
   scale = stddev * rho

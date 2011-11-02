@@ -7,7 +7,7 @@ class GaussianCardPresEnumerator
   include Enumerable
   
   def initialize opts={}
-    @opts = optify opts, { n_users:1000, n_payments:10000, stddev:0.25 }
+    @opts = optify opts, { n_users:3000, n_payments:50000, stddev:0.15 }
     @user_card_probabilities = gaussian_probability_distribution(@opts.n_users, @opts.stddev)
   end
   

@@ -11,7 +11,7 @@ def main
   
   card_preses = case start_opts[:source].to_sym
     when :gaussian
-      GaussianCardPresEnumerator.new n_users:3000, n_payments:50000, stddev:0.15
+      GaussianCardPresEnumerator.new opts
     when :file
       Parser.new ARGF
   end

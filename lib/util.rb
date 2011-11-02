@@ -6,29 +6,30 @@ class Struct
   end
 end
 
+class String
+  def convert_to_type_of other
+    return case other
+    when String
+      self
+    when Integer
+      to_i
+    when Float
+      to_f
+    when TrueClass
+      self=='true'
+    when FalseClass
+      self=='true'
+    end
+  end
+end
+
 def optify opts, defaults
-  accepted_opts = Hash[ defaults.map{ |k,v| 
-    [k, convert_from_string_to_match(opts[k]||defaults[k], defaults[k])]
+  accepted_opts = Hash[ defaults.map{ |k, v|
+    v = String===opts[k] ? opts[k].convert_to_type_of(v) : opts[k]  if opts.include? k
+    [k, v]
     } ]
   opts.delete_if {|k,v| accepted_opts.include? k}
   Struct.new(*accepted_opts.keys).new(*accepted_opts.values)
-end
-
-def convert_from_string_to_match string, other
-  return string unless string.is_a? String
-  
-  return case other
-  when String
-    string
-  when Integer
-    string.to_i
-  when Float
-    string.to_f
-  when TrueClass
-    string=='true'
-  when FalseClass
-    string=='true'
-  end
 end
 
 def cull_argv_opts argv=ARGV

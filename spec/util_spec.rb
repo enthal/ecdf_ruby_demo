@@ -17,11 +17,13 @@ describe 'util' do
     end
   end
 
-  describe '#convert_from_string_to_match' do
-    it { convert_from_string_to_match('2',1).should == 2 }
-    it { convert_from_string_to_match('a','b').should == 'a' }
-    it { convert_from_string_to_match(2,1).should == 2 }
-    it { convert_from_string_to_match('2',1.0).should == 2.0 }
-    it { convert_from_string_to_match('2.1',1.0).should == 2.1 }
+  describe String do
+    describe '#convert_to_type_of' do
+      it {   '2'.convert_to_type_of(1).should == 2 }
+      it {   'a'.convert_to_type_of('b').should == 'a' }
+      it {   '2'.convert_to_type_of(1.0).should == 2.0 }
+      it { '2.1'.convert_to_type_of(1.0).should == 2.1 }
+    end
   end
+  
 end

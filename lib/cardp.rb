@@ -25,6 +25,6 @@ def unscaled_ecdf interval_count, sorted_ratios
   }
 end
 
-def ratio_map denomitator, values
-  values.map { |v| v / denomitator.to_f }
+def ratio_map denominator, values
+  values.map { |v| v / denominator.to_f }
 end

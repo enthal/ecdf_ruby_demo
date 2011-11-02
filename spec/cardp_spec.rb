@@ -16,7 +16,7 @@ describe 'cardp' do
   end
   
   describe '#unscaled_ecdf' do
-    it { unscaled_ecdf(100, []) }
+    it { unscaled_ecdf(100, []).should == [0]*100 }
     it { unscaled_ecdf(3, [0.5,0.5]).should == [0,2,2] }
     it { unscaled_ecdf(3, [0.5,0.8]).should == [0,1,2] }
     it { unscaled_ecdf(4, [0.1, 0.85]).should == [1,1,1,2] }

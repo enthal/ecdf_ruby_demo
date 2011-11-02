@@ -39,6 +39,8 @@ def format_ecdf_as_required ecdf_vector
     percent_cp = (ratio_cp*100).to_i
     puts "#{i+1}\t      #{percent_cp}"
   end
+rescue
+  puts "EMPTY SPENDING BUCKET"
 end
 
 

@@ -31,10 +31,15 @@ describe 'CardPres' do
     it { CardPres.from_raw_input_line(" user , p, 123.45, 1, c\n").should == CardPres.new("user",1,123.45,1) }
   end
   
+  let (:cp1a) { CardPres.new(1,  3, 1.3,  5) }
+  let (:cp1b) { CardPres.new(1,  7, 2.0, 11) }
+  
   describe '#<<' do
-    let (:cp1a) { CardPres.new(1,  3, 1.3,  5) }
-    let (:cp1b) { CardPres.new(1,  7, 2.0, 11) }
     it { cp1a<<cp1b; cp1a.to_a.should == [1,10,3.3,16]}
+  end
+  
+  describe '#card_present_ratio' do
+    it { cp1a.card_present_ratio.should == 5.0/3 }
   end
   
   describe '::Aggregator' do

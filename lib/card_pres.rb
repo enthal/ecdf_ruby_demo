@@ -25,6 +25,10 @@ class CardPres < Struct.new( "CardPresStruct",
     self
   end
   
+  def card_present_ratio
+    self.card_present_count / self.total_count.to_f
+  end
+  
   class Aggregator
     include Enumerable
     

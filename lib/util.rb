@@ -1,13 +1,9 @@
 # Copyright © 2011 Timothy James; All rights reserved
 
-def optify opts={}, defaults={}
-  unrecognized_opts = opts.keys - defaults.keys
-  unless unrecognized_opts.empty?
-    raise "Unrecognized opts: #{unrecognized_opts.join(', ')} (allowed: #{defaults.keys.join(', ')})"
-  end
-  
-  opts = Hash[defaults].update opts
-  Struct.new(*opts.keys).new(*opts.values)
+def optify opts, defaults={}
+  new_opts = Hash[defaults].update opts
+  opts.delete_if {|k,v| defaults.include? k}  # delete accepted opts
+  Struct.new(*new_opts.keys).new(*new_opts.values)
 end
 
 def cull_argv_opts argv=ARGV

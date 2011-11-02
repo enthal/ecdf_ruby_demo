@@ -1,5 +1,7 @@
 
+DONE
 - use a class/struct for the triple
+
 - command line launching
   - write random demo data file
   - run with file or random data

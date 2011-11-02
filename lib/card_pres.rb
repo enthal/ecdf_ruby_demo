@@ -15,7 +15,13 @@ class CardPres < Struct.new( "CardPresStruct",
     line_parts = line.split(/ *, */).map{|part|part.strip}
     raise "Bad raw line (need 5 parts): #{line}" unless line_parts.size == 5
     user_id, payment_id, payment_amount, is_card_present, created_at = line_parts
+    # Ignore payment_id, created_at; assuming payment_id unique and not attempting to do anything special otherwise
     CardPres.new(user_id, 1, payment_amount, is_card_present)
+  end
+  
+  def to_raw_input_line
+    raise "Cannot convert to_raw_input_line an aggregated CardPres (total_count=#{total_count})" if total_count != 1
+    "#{self.user_id}, _, #{self.total_payment_amount}, #{self.card_present_count}, _"
   end
   
   def << other

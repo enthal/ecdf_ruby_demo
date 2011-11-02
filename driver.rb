@@ -10,15 +10,25 @@ class Driver
     @opts = cull_argv_opts
   end
   def run
-    start_opts = optify @opts, output:'all', source:(ARGV.empty? ? :gaussian : :file)
+    opts = optify @opts, action: :all, source:(ARGV.empty? ? :gaussian : :file)
   
-    card_preses = case start_opts.source
+    card_preses = case opts.source
       when :gaussian
         GaussianCardPresEnumerator.new @opts
       when :file
         Parser.new ARGF
     end
-  
+    
+    if opts.action == :dump
+      opts = optify @opts, dump_file:'dump.csv'
+      File.open(opts.dump_file, 'w') do |dump_file|
+        card_preses.each do |cp|
+          dump_file.puts cp.to_raw_input_line
+        end
+      end
+      return
+    end
+    
     output_ecdfs_for_lt100s_gt100s *(ecdfs_per_spending_bucket_for_raw_card_preses card_preses)
   end
 

@@ -32,6 +32,10 @@ describe 'CardPres' do
     it { CardPres.from_raw_input_line(" user , p, 123.45, 1, c\n").should == CardPres.new("user",1,123.45,1) }
   end
   
+  describe '#to_raw_input_line' do
+    it { CardPres.new("user",1,123.45,1).to_raw_input_line().should == "user, _, 123.45, 1, _" }
+  end
+  
   let (:cp1a) { CardPres.new(1,  3, 1.3,  5) }
   let (:cp1b) { CardPres.new(1,  7, 2.0, 11) }
   

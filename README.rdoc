@@ -1,24 +1,68 @@
-A SOLUTION FOR AN ECDF PROBLEM.
-Copyright © 2011 Timothy James; All rights reserved
-Runs on Ruby 1.9.2
+= A SOLUTION FOR AN ECDF PROBLEM.
+  Copyright © 2011 Timothy James; All rights reserved
+  Runs on Ruby 1.9.2
 
+------
+
+== PROBLEM
+
+* NOTE: This problem is copied verbatim from its source; I didn't write it.
 
 Suppose you have multiple large files (on the order of 100GBs) containing tuples of the following form: 
 
   {user_id, payment_id, payment_amount, is_card_present, created_at}. 
 
-Write a program to compute the empirical cumulative distribution function of the card present ratio 
-for users who processed less than $100, and for users who processed over $100.
+Write a program to compute the empirical cumulative distribution function of the card present ratio for users who processed less than $100, and for users who processed over $100.
  
 The expected output should be of the form:
  
-Users who processed less than $100
-percentile    % cp
-1             0
-2             0
-3             5
-...           ...
-100           100
+  Users who processed less than $100
+  percentile    % cp
+  1             0
+  2             0
+  3             5
+  ...           ...
+  100           100
  
 and similarly for users who processed over $100.
 
+
+=== PROBLEM DISCUSSION
+
+== SOLUTION
+
+=== RUNNING THE SOLUTION PROGRAM
+
+==== Simple operation
+
+Invoked without options or filenames, the program generates random data (see below), processes it (without parallelization) into an ECDF for each spending bucket, and prints the result in the required (see above) format.
+
+  ruby ./driver.rb
+
+Input files may be specified as command line arguments.  All other options are given in <name>=<value> form.  This processes data in file raw.csv:
+
+  ruby ./driver.rb action=all raw.csv
+
+The raw input data format follows the problem statement: comma-separated lines, each of 5 fields in a text file.  In order the fields are:
+
+* user_id : integer or string
+* (ignored)
+* payment_amount : decimal (float) number
+* is_card_present : 0 or 1  (1 when present)
+* (ignored)
+
+[user_id] integer or string
+[(ignored)]
+[payment_amount] decimal (float) number
+[is_card_present] 0 or 1  (1 when present)
+[(ignored)
+
+
+
+==== Paralellizable operation
+
+==== Generating random data
+
+in a Gaussian distribution
+
+=== SOLUTION DISCUSSION

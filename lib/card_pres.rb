@@ -19,10 +19,7 @@ class CardPres < Struct.new( "CardPresStruct",
   
   def << other
     raise "user_id mismatch (#{user_id} != #{other.user_id})" if self.user_id != other.user_id
-    self.total_count          += other.total_count
-    self.total_payment_amount += other.total_payment_amount
-    self.card_present_count   += other.card_present_count
-    self
+    (1...self.size).each { |i| self[i] += other[i] }
   end
   
   def card_present_ratio

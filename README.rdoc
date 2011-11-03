@@ -35,34 +35,66 @@ and similarly for users who processed over $100.
 
 ==== Simple operation
 
-Invoked without options or filenames, the program generates random data (see below), processes it (without parallelization) into an ECDF for each spending bucket, and prints the result in the required (see above) format.
+Invoked without options or filenames, the program generates random data (see below), processes it (without parallelization -- but see below) into an ECDF for each spending bucket, and prints the result in the required (see above) format.
 
   ruby ./driver.rb
 
-Input files may be specified as command line arguments.  All other options are given in <name>=<value> form.  This processes data in file raw.csv:
+Input files may be specified as command line arguments.  All other options are given in _name_=_value <name>=<value> form.  This processes data in files 1.csv and 2.csv ('all' happens to be the default action):
 
-  ruby ./driver.rb action=all raw.csv
+  ruby ./driver.rb action=all 1.csv 2.csv
 
-The raw input data format follows the problem statement: comma-separated lines, each of 5 fields in a text file.  In order the fields are:
+==== Raw input data
 
-* user_id : integer or string
+The raw input data format follows the problem statement: a text file of (newline-terminated) lines, each of 5 comma-separated fields.  In order, the fields are:
+
+* *user_id* : integer or string
 * (ignored)
-* payment_amount : decimal (float) number
-* is_card_present : 0 or 1  (1 when present)
+* *payment_amount* : decimal (float) number
+* *is_card_present* : 0 or 1  (1 when present)
 * (ignored)
-
-[user_id] integer or string
-[(ignored)]
-[payment_amount] decimal (float) number
-[is_card_present] 0 or 1  (1 when present)
-[(ignored)
-
-
-
-==== Paralellizable operation
 
 ==== Generating random data
 
-in a Gaussian distribution
+When run without any specified filenames, the program generates random data for a given (defaulted, see below) number of users and payments.  Each user is assigned, in a Gaussian distribution with a given standard deviation, a random probability of having card present on any given payment.  Each payment amount is scaled so that the total payment amount for each user across all generated payments is roughly as likely to be in either payment bucket, regardless of the number of users or payments.
+
+Thus, the ECDF (for each payment bucket) calculated from the generated data occurs as a recognizable curve (<tt>graph=true</tt> helps), helping to validate the whole of the program as correct.
+
+Instead of processing the data, the program will dump it to a file given <tt>action=dump</tt>.  A filename may be specified with <tt>outfile=<filename></tt>; default is +raw.csv+.  E.g.,
+
+  ruby ./driver.rb action=dump outfile=/tmp/generated.csv
+
+Produces a file whose first lines might be
+
+  2659, _, 11.0, 1, _
+  2257, _, 7.0, 0, _
+  785, _, 2.0, 1, _
+  2829, _, 7.0, 0, _
+
+This could in turn be processed using:
+
+  ruby ./driver.rb /tmp/generated.csv
+
+The 
+
+==== Parallelizable operation
+
+Input data "on the order of 100GBs" calls for parallel processing.  The program works in phases, which may be run independently to allow aggregation of data per-user-id independently from the final computation and output of payment-bucketed ECDFs.  The aggregation step may be run in parallel across separate raw input files with the intermediate output files therefrom processed in a final finishing step.  
+
+Since the parallelizable step is per-user aggregation, the work is sped up only as a function of average payment count per user
+
+
+If raw input data is present on (and ideally initially logged to) separate machines, e.g., AWS EC2 nodes, aggregation may be run on those nodes with the data, with output files sent to a single node for finishing computation.  This follows Google's original model for MapReduce where processing was moved to data, and is distinct from the approach available taken by, say, AWS EMR, where data must be moved to processing ad hoc.  The tradeoff, of course, is the elasticity afforded by the latter approach: there's no need to dedicate resources for hosting data _and_ processing ahead of time.  
+
+Note that this program needs no unique association of user with aggregation process or file, so incoming payment transaction log lines may be arbitrarily spread among machines with, e.g., naïve load balancing.
+
+
+
 
 === SOLUTION DISCUSSION
+
+
+
+
+
+
+

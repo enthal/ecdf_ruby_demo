@@ -169,7 +169,7 @@ Try it yourself:
 Two output options offer output that may be more interesting or convenient for testing:
 
 * <tt>graph=true</tt> - Rudimentary graph of ECDFs, as "ascii-art"
-* <tt>percentiles=</tt>_number_ - default:100; Group users into more or fewer intervals than the default 100.  Useful at small values while experimenting with, e.g., the Gaussian parameters, or parallelization timings.
+* <tt>percentiles=</tt>_number_ - default:100; Group users into more or fewer ECDF intervals than the default 100.  Useful at small values while experimenting with, e.g., the Gaussian parameters, or parallelization timings.  Use of this option angers the Latin-speaking gods of Rome.
 
 
 ----------

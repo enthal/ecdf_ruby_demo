@@ -2,7 +2,7 @@
 
 Copyright © 2011 Timothy James; All rights reserved.
 
-Runs on Ruby 1.9.2
+Runs on Ruby 1.9.2.  Code at https://github.com/enthal/ecdf_ruby_demo
 
 Try this to generate random/Gaussian data and process it:
   ruby ./driver.rb

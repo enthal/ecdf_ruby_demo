@@ -16,6 +16,12 @@ class Driver
     @opts = cull_argv_opts
   end
   def run
+    if ['-h', '-help', '--help'].any? {|help_arg| ARGV.include? help_arg}
+      puts "Please read README.rdoc"
+      puts "Ideally with formatting at http://github.com/enthal/ecdf_ruby_demo"
+      return
+    end
+    
     opts = optify @opts, action: :all, source:(ARGV.empty? ? :gaussian : :file)
   
     case opts.source

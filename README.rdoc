@@ -1,10 +1,11 @@
-= A SOLUTION FOR AN ECDF PROBLEM
+  A SOLUTION FOR AN ECDF PROBLEM
+  
   Copyright © 2011 Timothy James; All rights reserved
   Runs on Ruby 1.9.2
 
 ------
 
-== PROBLEM
+= PROBLEM
 
 * NOTE: This problem is copied verbatim from:
   https://squareup.com/jobs/oD5LVfw8
@@ -28,9 +29,9 @@ The expected output should be of the form:
 and similarly for users who processed over $100.
 
 
-=== PROBLEM DISCUSSION
+== PROBLEM DISCUSSION
 
-== SOLUTION
+= SOLUTION
 
 Ruby, somewhat OO, somewhat functional.
 
@@ -42,16 +43,16 @@ card_pres.rb cardp.rb
 
 rspecs
 
-=== ALTERNATIVES
+== ALTERNATIVES
 
 It is worth noting the the solution program as implemented could be modified to run distributed with Hadoop.  Given the "demo" "challenge" nature of the problem, I opted for a simple file-based parallelization approach. 
 
 For real work, I might choose a solution in PIG (on Hadoop) instead, since it provides a general solution for them work of the program not specific to the problem domain.  I wanted to work it through in Ruby and see what I could learn.  In practice, it would be at least worth writing (or attempting to write) a PIG solution for comparison before investing further in this or any Ruby solution.  By contrast, I imagine having worked through it in ruby ahead of a PIG (or any other) approach must bring out important subtleties of the problem space and the various solution spaces.
 
 
-=== RUNNING THE SOLUTION PROGRAM
+== RUNNING THE SOLUTION PROGRAM
 
-==== Simple operation
+=== Simple operation
 
 Invoked without options or filenames, the program generates random data (see below), processes it (without parallelization -- but see below for that) into an ECDF for each spending bucket, and prints the result in the required (see above) format.
 
@@ -61,7 +62,7 @@ Input files may be specified as command line arguments.  All other options are g
 
   ruby ./driver.rb action=all 1.csv 2.csv
 
-==== Raw input data format
+=== Raw input data format
 
 The raw input data format follows the problem statement: a text file of (newline-terminated) lines, each of 5 comma-separated fields.  In order, the fields are:
 
@@ -71,7 +72,7 @@ The raw input data format follows the problem statement: a text file of (newline
 * *is_card_present* : 0 or 1  (1 when present)
 * (ignored)
 
-==== Generating random data
+=== Generating random data
 
 When run without any specified filenames, the program generates random data for a given (defaulted, see below) number of users and payments.  Each user is assigned, in a Gaussian distribution with a given (defaulted) standard deviation, a random probability of having card present on any given payment.  Each payment amount is scaled so that the total payment amount for each user across all generated payments is roughly as likely to be in either payment bucket, regardless of the number of users or payments.
 
@@ -102,7 +103,7 @@ E.g.,
 
   ruby ./driver.rb action=dump outfile=dump.csv n_users=30000 n_payments=500000 stddev=0.25
 
-==== Parallelizing operation
+=== Parallelizing operation
 
 Input data "on the order of 100GBs" calls for parallel processing.  The program works in two phases, which may be run independently to allow parallelization of the first phase.  That is, raw data may be aggregated in parallel and independently from the final computation and output of payment-bucketed ECDFs.  This may be performed as follows.
 

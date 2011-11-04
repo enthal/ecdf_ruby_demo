@@ -6,7 +6,8 @@
 
 == PROBLEM
 
-* NOTE: This problem is copied verbatim from its source; I didn't write it.
+* NOTE: This problem is copied verbatim from its source
+  https://squareup.com/jobs/oD5LVfw8
 
 Suppose you have multiple large files (on the order of 100GBs) containing tuples of the following form: 
 
@@ -43,7 +44,9 @@ rspecs
 
 === ALTERNATIVES
 
-For real work, I might choose a solution in PIG (on Hadoop) instead, since it provides a general solution for work of the program not specific to the problem domain.  I wanted to work it through in Ruby and see what I could learn.  In practice, it would be at least worth writing (or attempting to write) a PIG solution for comparison before investing further in this or any Ruby solution.  By contrast, I imagine having worked through it in ruby ahead of a PIG (or any other) approach must bring out important subtleties of the problem space and the various solution spaces.
+It is worth noting the the solution program as implemented could be modified to run distributed with Hadoop.  Given the "demo" "challenge" nature of the problem, I opted for a simple file-based parallelization approach. 
+
+For real work, I might choose a solution in PIG (on Hadoop) instead, since it provides a general solution for them work of the program not specific to the problem domain.  I wanted to work it through in Ruby and see what I could learn.  In practice, it would be at least worth writing (or attempting to write) a PIG solution for comparison before investing further in this or any Ruby solution.  By contrast, I imagine having worked through it in ruby ahead of a PIG (or any other) approach must bring out important subtleties of the problem space and the various solution spaces.
 
 
 === RUNNING THE SOLUTION PROGRAM
@@ -70,7 +73,7 @@ The raw input data format follows the problem statement: a text file of (newline
 
 ==== Generating random data
 
-When run without any specified filenames, the program generates random data for a given (defaulted, see below) number of users and payments.  Each user is assigned, in a Gaussian distribution with a given standard deviation, a random probability of having card present on any given payment.  Each payment amount is scaled so that the total payment amount for each user across all generated payments is roughly as likely to be in either payment bucket, regardless of the number of users or payments.
+When run without any specified filenames, the program generates random data for a given (defaulted, see below) number of users and payments.  Each user is assigned, in a Gaussian distribution with a given (defaulted) standard deviation, a random probability of having card present on any given payment.  Each payment amount is scaled so that the total payment amount for each user across all generated payments is roughly as likely to be in either payment bucket, regardless of the number of users or payments.
 
 Thus, the ECDF (for each payment bucket) calculated from the generated data occurs as a recognizable curve (<tt>graph=true</tt> helps), helping to validate the whole of the program as correct.
 
@@ -119,12 +122,20 @@ FWIW, multiple intermediate output files (from <tt>action=aggregate</tt>) may be
 
 Finally, even if data is all on one machine, it can be faster to parallelize the aggregate step.  For example, informal experimentation on my dual-core laptop (with n_users=30000 n_payments=500000) yields ~16 second aggregation of the whole dataset (and available CPU), and ~10 second aggregation with 2 parallel aggregations (with bound CPU).  The finish step for this dataset on this machine takes ~2 seconds.  This preliminarily suggests 1 aggregation process per core up to disk IO limits.
 
+Try it yourself:
 
+  ruby ./driver.rb percentiles=50 action=dump outfile=dump.csv n_users=30000 n_payments=500000 stddev=0.25
+  head -250000 dump.csv > dump.1.csv
+  tail -250000 dump.csv > dump.2.csv
+  (
+    time ruby ./driver.rb dump.1.csv action=aggregate outfile=ag.1.csv )& (
+    time ruby ./driver.rb dump.2.csv action=aggregate outfile=ag.2.csv )&
+  # Wait till both finish...
+  time ruby ./driver.rb action=finish ag.[12].csv
 
+-----
 
-=== SOLUTION DISCUSSION
-
-
+Thanks for reading.  If you found the experience worthwhile, let's talk!
 
 
 

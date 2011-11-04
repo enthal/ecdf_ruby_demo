@@ -1,5 +1,8 @@
 # Copyright © 2011 Timothy James; All rights reserved
 
+# Aggregate incoming payment tuples for an individual user.
+# Line parsing and formatting for raw input and intermediate files.
+#
 class CardPres < Struct.new( "CardPresStruct",
     :user_id, :total_count, :total_payment_amount, :card_present_count )
   
@@ -40,6 +43,9 @@ class CardPres < Struct.new( "CardPresStruct",
     self.card_present_count / self.total_count.to_f
   end
   
+  
+  # Collect incoming tuples across all users as +CardPres+ objects hashed by user_id
+  #
   class Aggregator
     include Enumerable
     
@@ -57,6 +63,7 @@ class CardPres < Struct.new( "CardPresStruct",
       self
     end
   end
+
 end
 
 

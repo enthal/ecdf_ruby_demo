@@ -1,5 +1,9 @@
 # Copyright © 2011 Timothy James; All rights reserved
 
+# 
+# cardp.rb - Bare functions to partition users and calculate the ECDFs given per-user aggregate data.
+# 
+
 def ecdfs_per_spending_bucket_for_aggregate_card_preses interval_count, aggregate_card_preses
   card_present_ratios_for_each_spending_bucket(aggregate_card_preses).map do |spending_bucket|
     ecdf(interval_count, spending_bucket.sort!)

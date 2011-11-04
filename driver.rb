@@ -1,4 +1,10 @@
 # Copyright © 2011 Timothy James; All rights reserved
+
+# 
+# Invoked from command line, performs all or phased actions to calculate and present ECDFs.
+# Accepts from ARGV file names and name=value options.
+# 
+
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
 require 'cardp'
 require 'util'

@@ -1,7 +1,8 @@
        -- A SOLUTION FOR AN ECDF PROBLEM --
 
 Copyright © 2011 Timothy James; All rights reserved.
-<br>Runs on Ruby 1.9.2
+
+Runs on Ruby 1.9.2
 
 Try this to generate random/Gaussian data and process it:
   ruby ./driver.rb
@@ -15,7 +16,7 @@ Read on for the full problem and solution, including parallelization!
 = PROBLEM
 
 == Problem Statement
-<i>*NOTE:* This problem is copied verbatim from: https://squareup.com/jobs/oD5LVfw8</i>
+<i>*NOTE:* This problem statement is copied verbatim from: https://squareup.com/jobs/oD5LVfw8</i>
 
 Suppose you have multiple large files (on the order of 100GBs) containing tuples of the following form: 
 
@@ -40,12 +41,9 @@ and similarly for users who processed over $100.
 
 The scope of this challenge has two essential facets: *parallelization* (data "on the order of 100GBs") and the *ECDF* *computation* itself.  
 
-Since the two required total-payment-bucketed *ECDFs* serve to assign _users_ to percentiles, the data must first be aggregated per-user, counting their payments and summing their individual +payment_amount+ and +is_card_present+ count.  Then the aggregate users may be partitioned into buckets (at $100 total +payment_amount+ threshold) and there into percentile by ratio of +is_card_present+ count to total payment count.
+Since the two required total-payment-bucketed *ECDFs* serve to assign _users_ to percentiles, the data must first be aggregated per-user, counting their payments and summing their individual +payment_amount+ and +is_card_present+ count.  Then the aggregate users may be partitioned into buckets (at $100 total +payment_amount+ threshold) and from there into percentile by ratio of +is_card_present+ count to total payment count.  Thus, there is ample opportunity to *parallelize* the (expected) bulk of the work: aggregation by user.
 
-Thus, there is ample opportunity to *parallelize* the (expected) bulk of the work: aggregation by user.
-
-Also of note: the presence of the +payment_id+ and +created_at+ fields suggest that unique payment (by id) may occur multiple times in the data, perhaps with only the last one for a +payment_id+ (by +created_at+) to supersede all others.  The problem as stated does not address this issue.  I chose in my solution to disregard this possibility and ignore those fields, assuming that each payment line in the data is to be included in the results.  While I made this decision for simplicity, I note that significantly more processing would be required to "unique" the payments (aggregating by payment_id) and this may (_may_) ultimately not yield significant difference in the results (if updated or "corrected" payments are relatively few).
-
+The +payment_id+ and +created_at+ tuple fields are notable; a discussion follows in the SOLUTION section.
   
 
 = SOLUTION
@@ -54,29 +52,30 @@ I offer a solution written in ruby (1.9.2).  The code is written to be understoo
 
 Following from my discussion of the problem (see above), the solution separates aggregation by user from ECDF computation, allowing parallel processing for aggregation.  See "Parallelizing operation", below, for more details.
 
-The code is likely most approachable reading these files in order:
+The aggregation phase runs in O(payment_count) time and O(user_count) space for the given process input (a subset of the full data set when parallelized).  The finish phase runs in O(intermediate_input_line_count) time and O(user_count) space across the entire dataset.  As such, this solution is memory-bounded as a linear function of user count, i.e., if you have many many users, you'll exhaust memory and be sad, but if you have enough memory for your user count, there is no bound on number of payments.  
 
-* +cardp.rb+ 
-* +card_pres.rb+ 
-* +driver.rb+ 
+Unit tests, included, helped me get each small part right.  I chose not to cover the higher-level operation, preferring manual testing in this case.  In a work environment, I might create unit or functional tests with canned data and known correct output, but I lacked that with this challenge problem.  Instead, this solution includes a data generator that produces payment data with per-user +is_card_present+ probability occurring in a Gaussian distribution, such that the output ECSFs under correct operation occur as a recognizable S-curve (especially when graphed).  In real work, tests could (I imagine) be constructed to mathematically show output ECDF fits input Gaussian data, by, e.g., standard deviation.  These could be maintained as part of a functional test suite.
 
-Ruby, somewhat OO, somewhat functional.
+The code is likely most approachable reading these files (and perhaps their associated specs (tests)) in order:
 
-Big-O
+* <tt>lib/cardp.rb</tt> - Bare functions to partition users and calculate the ECDFs given per-user aggregate data.
+* <tt>lib/card_pres.rb</tt> - Classes that aggregate data per-user
+  * class +CardPres+ - Aggregate incoming payment tuples for an individual user; line parsing and formatting for raw input and intermediate files
+  * class <tt>CardPres::Aggregator</tt> - Collect incoming tuples across all users as +CardPres+ objects hashed by user_id
+* +driver.rb+ - Invoked from command line, performs all or phased actions to calculate and present ECDFs using logic from the files described above.
 
-A complete procedural/functional implementation of the algorithm was done at git commit
+The other .rb files provide supporting functionality.
 
+FWIW, a complete procedural/functional implementation of the core algorithm was done at git commit XXXX in file +cardp.rb+.  I deemed it hard to understand for my expected audience and opted to bring in some OO, which I leave in the delivered solution.
 
+Also of note: the presence in the input tuples of the +payment_id+ and +created_at+ fields suggest that unique payment (by id) may occur multiple times in the data.  That might occur if a payment was changed or corrected, or perhaps when resending a payment.  In that case the last instance (by +created_at+) for a +payment_id+ would supersede all others.  The stated problem does not address this issue.  I chose in my solution to disregard this possibility and ignore those fields, assuming that each payment line in the data is to be included in the results.  While I made this decision for simplicity, I note that significantly more processing would be required to "unique" the payments (aggregating by payment_id) and this may (_may_) ultimately not yield significant difference in the results (if updated or "corrected" payments are relatively few).  Naturally I'm curious what the problem's author had in mind.
 
-card_pres.rb cardp.rb
-
-rspecs
 
 == Alternatives
 
-It is worth noting the the solution program as implemented could be modified to run distributed with Hadoop.  Given the "demo" "challenge" nature of the problem, I opted for a simple file-based parallelization approach. 
-
 For real work, I might choose a solution in PIG (on Hadoop) instead, since it provides a general solution for them work of the program not specific to the problem domain.  I wanted to work it through in Ruby and see what I could learn.  In practice, it would be at least worth writing (or attempting to write) a PIG solution for comparison before investing further in this or any Ruby solution.  By contrast, I imagine having worked through it in ruby ahead of a PIG (or any other) approach must bring out important subtleties of the problem space and the various solution spaces.
+
+It is worth noting the the solution program as implemented could be modified to run distributed with Hadoop.  Given the "demo" "challenge" nature of the problem, I opted for a simple file-based parallelization approach. 
 
 
 == Running the Solution Program
@@ -87,7 +86,9 @@ Invoked without options or filenames, the program generates random data (see bel
 
   ruby ./driver.rb
 
-Input files may be specified as command line arguments.  All other options are given in _name_=_value_ form.  This processes data in files 1.csv and 2.csv ('+all+' happens to be the default +action+):
+Input files may be specified as command line arguments.  All other options are given in _name_=_value_ form.
+
+This processes data in files 1.csv and 2.csv ("+all+" happens to be the default +action+):
 
   ruby ./driver.rb action=all 1.csv 2.csv
 
@@ -98,7 +99,7 @@ The raw input data format follows the problem statement: a text file of (newline
 * *user_id* : integer or string
 * (ignored)
 * *payment_amount* : decimal (float) number
-* *is_card_present* : 0 or 1  (1 when present)
+* *is_card_present* : 0 or 1  (1 denotes card present)
 * (ignored)
 
 === - Generating random data
@@ -107,7 +108,7 @@ When run without any specified filenames, the program generates random data for 
 
 Thus, the ECDF (for each payment bucket) calculated from the generated data occurs as a recognizable curve (<tt>graph=true</tt> helps), helping to validate the whole of the program as correct.
 
-Instead of processing the data, the program will dump it to a file given <tt>action=dump</tt>.  An output filename may be specified with <tt>outfile=<filename></tt>; default is +raw.csv+.  E.g.,
+Instead of processing the data, the program will dump it to a file given <tt>action=dump</tt>.  An output filename may be specified with <tt>outfile=</tt>_filename_; default: <tt>outfile=raw.csv</tt>.  E.g.,
 
   ruby ./driver.rb action=dump outfile=/tmp/generated.csv
 
@@ -136,7 +137,7 @@ E.g.,
 
 Input data "on the order of 100GBs" calls for parallel processing.  The program works in two phases, which may be run independently to allow parallelization of the first phase.  That is, raw data may be aggregated in parallel and independently from the final computation and output of payment-bucketed ECDFs.  This may be performed as follows.
 
-First, run the aggregation step in parallel across separate raw input files with <tt>action=aggregate</tt>.  An +outfile+ may be named; default: <tt>outfile=aggregate</tt>.  Then collect the produced files onto a single machine and there run the final computation with <tt>action=finish</tt>, naming all the intermediate files produced in the aggregate step.  E.g.,
+First, run the aggregation step in parallel across separate raw input files with <tt>action=aggregate</tt>.  An +outfile+ may be named; default: <tt>outfile=aggregate.csv</tt>.  Then collect the produced files onto a single machine and there run the final computation with <tt>action=finish</tt>, naming all the intermediate files produced in the aggregate step.  E.g.,
 
   ruby ./driver.rb data.1.csv  action=aggregate outfile=ag.1.csv
   ruby ./driver.rb data.2.csv  action=aggregate outfile=ag.2.csv
@@ -163,7 +164,15 @@ Try it yourself:
   # Wait till both finish...
   time ruby ./driver.rb action=finish ag.[12].csv
 
------
+=== - Special output options
+
+Two output options offer output that may be more interesting or convenient for testing:
+
+* <tt>graph=true</tt> - Rudimentary graph of ECDFs, as "ascii-art"
+* <tt>percentiles=</tt>_number_ - default:100; Group users into more or fewer intervals than the default 100.  Useful at small values while experimenting with, e.g., the Gaussian parameters, or parallelization timings.
+
+
+----------
 
 <i>Thanks for reading.  If you found the experience worthwhile, let's talk!</i>
 

@@ -1,4 +1,4 @@
-= A SOLUTION FOR AN ECDF PROBLEM.
+<span style="font-size:200%">A SOLUTION FOR AN ECDF PROBLEM</span>
   Copyright © 2011 Timothy James; All rights reserved
   Runs on Ruby 1.9.2
 
@@ -6,7 +6,7 @@
 
 == PROBLEM
 
-* NOTE: This problem is copied verbatim from its source
+* NOTE: This problem is copied verbatim from:
   https://squareup.com/jobs/oD5LVfw8
 
 Suppose you have multiple large files (on the order of 100GBs) containing tuples of the following form: 

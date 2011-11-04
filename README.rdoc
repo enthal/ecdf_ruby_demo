@@ -31,11 +31,26 @@ and similarly for users who processed over $100.
 
 == SOLUTION
 
+Ruby, somewhat OO, somewhat functional.
+
+A complete procedural implementation is available at
+
+
+
+card_pres.rb cardp.rb
+
+rspecs
+
+=== ALTERNATIVES
+
+For real work, I might choose a solution in PIG (on Hadoop) instead, since it provides a general solution for work of the program not specific to the problem domain.  I wanted to work it through in Ruby and see what I could learn.  In practice, it would be at least worth writing (or attempting to write) a PIG solution for comparison before investing further in this or any Ruby solution.  By contrast, I imagine having worked through it in ruby ahead of a PIG (or any other) approach must bring out important subtleties of the problem space and the various solution spaces.
+
+
 === RUNNING THE SOLUTION PROGRAM
 
 ==== Simple operation
 
-Invoked without options or filenames, the program generates random data (see below), processes it (without parallelization -- but see below) into an ECDF for each spending bucket, and prints the result in the required (see above) format.
+Invoked without options or filenames, the program generates random data (see below), processes it (without parallelization -- but see below for that) into an ECDF for each spending bucket, and prints the result in the required (see above) format.
 
   ruby ./driver.rb
 
@@ -43,7 +58,7 @@ Input files may be specified as command line arguments.  All other options are g
 
   ruby ./driver.rb action=all 1.csv 2.csv
 
-==== Raw input data
+==== Raw input data format
 
 The raw input data format follows the problem statement: a text file of (newline-terminated) lines, each of 5 comma-separated fields.  In order, the fields are:
 
@@ -59,7 +74,7 @@ When run without any specified filenames, the program generates random data for 
 
 Thus, the ECDF (for each payment bucket) calculated from the generated data occurs as a recognizable curve (<tt>graph=true</tt> helps), helping to validate the whole of the program as correct.
 
-Instead of processing the data, the program will dump it to a file given <tt>action=dump</tt>.  A filename may be specified with <tt>outfile=<filename></tt>; default is +raw.csv+.  E.g.,
+Instead of processing the data, the program will dump it to a file given <tt>action=dump</tt>.  An output filename may be specified with <tt>outfile=<filename></tt>; default is +raw.csv+.  E.g.,
 
   ruby ./driver.rb action=dump outfile=/tmp/generated.csv
 
@@ -74,18 +89,35 @@ This could in turn be processed using:
 
   ruby ./driver.rb /tmp/generated.csv
 
-The 
+The amount and "shape" of data generated bear 3 parameters:  
 
-==== Parallelizable operation
+* +n_users+ default:3000; The number of users, each with own random (Gaussian) card present probability
+* +n_payments+ default:50000; Total number of payments spread across all +n_users+
+* +stddev+ default:0.15; Standard deviation of card present probabilities across all users
 
-Input data "on the order of 100GBs" calls for parallel processing.  The program works in phases, which may be run independently to allow aggregation of data per-user-id independently from the final computation and output of payment-bucketed ECDFs.  The aggregation step may be run in parallel across separate raw input files with the intermediate output files therefrom processed in a final finishing step.  
+E.g.,
 
-Since the parallelizable step is per-user aggregation, the work is sped up only as a function of average payment count per user
+  ruby ./driver.rb action=dump outfile=dump.csv n_users=30000 n_payments=500000 stddev=0.25
 
+==== Parallelizing operation
 
-If raw input data is present on (and ideally initially logged to) separate machines, e.g., AWS EC2 nodes, aggregation may be run on those nodes with the data, with output files sent to a single node for finishing computation.  This follows Google's original model for MapReduce where processing was moved to data, and is distinct from the approach available taken by, say, AWS EMR, where data must be moved to processing ad hoc.  The tradeoff, of course, is the elasticity afforded by the latter approach: there's no need to dedicate resources for hosting data _and_ processing ahead of time.  
+Input data "on the order of 100GBs" calls for parallel processing.  The program works in two phases, which may be run independently to allow parallelization of the first phase.  That is, raw data may be aggregated in parallel and independently from the final computation and output of payment-bucketed ECDFs.  This may be performed as follows.
 
-Note that this program needs no unique association of user with aggregation process or file, so incoming payment transaction log lines may be arbitrarily spread among machines with, e.g., naïve load balancing.
+First, run the aggregation step in parallel across separate raw input files with <tt>action=aggregate</tt>.  An +outfile+ may be named; default: <tt>outfile=aggregate</tt>.  Then collect the produced files onto a single machine and there run the final computation with <tt>action=finish</tt>, naming all the intermediate files produced in the aggregate step.  E.g.,
+
+  ruby ./driver.rb data.1.csv action=aggregate outfile=ag.1.csv
+  ruby ./driver.rb data.2.csv action=aggregate outfile=ag.2.csv
+  ruby ./driver.rb action=finish ag.[12].csv
+
+Since the parallelizable step is per-user aggregation, the work is sped up only as a function of average payment count per user.  So in the degenerate case of 1 payment per unique user, there would be no speedup.
+
+If raw input data is present on (and ideally initially logged to) separate machines, e.g., AWS EC2 nodes, aggregation may be run on each node holding part of the data, with output files sent to a single node for finishing computation.  This follows Google's original model for MapReduce where processing was moved to data, and is distinct from the approach taken by, say, AWS EMR, where data must be moved to processing ad hoc.  The tradeoff, of course, is the speed of the former approach, with no need to transfer the raw data to the processing, against the convenience of elasticity afforded by the latter approach: there's no need to dedicate resources for hosting data _and_ processing ahead of time.  An EMR-style approach could still be used with this program as implemented.
+
+Note that this program needs no unique association of user with aggregation process or file, so incoming payment transaction log lines may be arbitrarily spread among machines with, e.g., naïve load balancing.  However, greater efficiency (at least as smaller intermediate files) could be achieved with user affinity with aggregate node.
+
+FWIW, multiple intermediate output files (from <tt>action=aggregate</tt>) may be re-aggregated ("re-reduced") with <tt>action=reaggregate</tt>.  This may be useful when running several aggregate processes in parallel on _each_ aggregate-node before final transmission to the finish-node, to maximally reduce file size and transmission time.
+
+Finally, even if data is all on one machine, it can be faster to parallelize the aggregate step.  For example, informal experimentation on my dual-core laptop (with n_users=30000 n_payments=500000) yields ~16 second aggregation of the whole dataset (and available CPU), and ~10 second aggregation with 2 parallel aggregations (with bound CPU).  The finish step for this dataset on this machine takes ~2 seconds.  This preliminarily suggests 1 aggregation process per core up to disk IO limits.
 
 
 

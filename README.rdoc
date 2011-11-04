@@ -66,7 +66,7 @@ The code is likely most approachable reading these files (and perhaps their asso
 
 The other .rb files provide supporting functionality.
 
-FWIW, a complete procedural/functional implementation of the core algorithm was done at git commit XXXX in file +cardp.rb+.  I deemed it hard to understand for my expected audience and opted to bring in some OO, which I leave in the delivered solution.
+FWIW, a complete procedural/functional implementation of the core algorithm was done at git tag "+procedural+" (commit +8b09b6c+) in file +cardp.rb+.  I deemed it potentially hard for others to understand and opted to bring in more OO, which I leave in the delivered solution.
 
 Also of note: the presence in the input tuples of the +payment_id+ and +created_at+ fields suggest that unique payment (by id) may occur multiple times in the data.  That might occur if a payment was changed or corrected, or perhaps when resending a payment.  In that case the last instance (by +created_at+) for a +payment_id+ would supersede all others.  The stated problem does not address this issue.  I chose in my solution to disregard this possibility and ignore those fields, assuming that each payment line in the data is to be included in the results.  While I made this decision for simplicity, I note that significantly more processing would be required to "unique" the payments (aggregating by payment_id) and this may (_may_) ultimately not yield significant difference in the results (if updated or "corrected" payments are relatively few).  Naturally I'm curious what the problem's author had in mind.
 

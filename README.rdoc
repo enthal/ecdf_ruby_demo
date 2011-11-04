@@ -1,4 +1,4 @@
-<span style="font-size:200%">A SOLUTION FOR AN ECDF PROBLEM</span>
+= A SOLUTION FOR AN ECDF PROBLEM
   Copyright © 2011 Timothy James; All rights reserved
   Runs on Ruby 1.9.2
 

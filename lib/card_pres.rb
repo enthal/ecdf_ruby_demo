@@ -24,7 +24,7 @@ class CardPres < Struct.new( "CardPresStruct",
   
   def to_raw_input_line
     raise "Cannot convert to_raw_input_line an aggregated CardPres (total_count=#{total_count})" if total_count != 1
-    "#{self.user_id}, _, #{self.total_payment_amount}, #{self.card_present_count}, _"
+    "#{self.user_id},_,#{self.total_payment_amount},#{self.card_present_count},_"
   end
   
   def self.from_csv_line line

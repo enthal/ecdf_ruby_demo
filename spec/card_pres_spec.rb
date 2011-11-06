@@ -33,7 +33,7 @@ describe CardPres do
   end
   
   describe '#to_raw_input_line' do
-    it { CardPres.new("user",1,123.45,1).to_raw_input_line().should == "user, _, 123.45, 1, _" }
+    it { CardPres.new("user",1,123.45,1).to_raw_input_line().should == "user,_,123.45,1,_" }
   end
 
   describe '.from_csv_line' do

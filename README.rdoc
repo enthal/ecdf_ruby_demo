@@ -73,9 +73,11 @@ Also of note: the presence in the input tuples of the +payment_id+ and +created_
 
 == Alternatives
 
-For real work, I might choose a solution in PIG (on Hadoop) instead, since it provides a general solution for them work of the program not specific to the problem domain.  I wanted to work it through in Ruby and see what I could learn.  In practice, it would be at least worth writing (or attempting to write) a PIG solution for comparison before investing further in this or any Ruby solution.  By contrast, I imagine having worked through it in ruby ahead of a PIG (or any other) approach must bring out important subtleties of the problem space and the various solution spaces.
+For real work, I might choose a solution in {Pig}[http://pig.apache.org/] (on {Hadoop}[http://hadoop.apache.org/]) instead, since it provides a general solution for them work of the program not specific to the problem domain.  This would likely require a {UDF}[http://pig.apache.org/docs/r0.9.1/udf.html] to do the ECDF from ordered +card_present+ ratios.  {Cascading}[http://www.cascading.org/] (also on Hadoop), perhaps with {cascading.jruby}[http://github.com/gmarabout/cascading.jruby/], would make another fine choice.
 
-It is worth noting the the solution program as implemented could be modified to run distributed with Hadoop.  Given the "demo" "challenge" nature of the problem, I opted for a simple file-based parallelization approach. 
+I wanted to work the problem through in bare Ruby and see what I could learn.  In practice, it would be at least worth writing (or attempting to write) a Pig or Cascading solution for comparison before investing further in this solution.  By contrast, I imagine having worked through it in ruby ahead of such other approach would bring out important subtleties of work.
+
+It is worth noting the the solution program as implemented could likely be simply modified to run distributed with Hadoop.  Given the "demo" "challenge" nature of the problem, I opted for a simple file-based parallelization approach. 
 
 
 == Running the Solution Program

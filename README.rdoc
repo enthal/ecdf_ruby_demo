@@ -157,7 +157,7 @@ Finally, even if data is all on one machine, it can be faster to parallelize the
 
 Try it yourself:
 
-  ruby ./driver.rb percentiles=50 action=dump outfile=dump.csv n_users=30000 n_payments=500000 stddev=0.25
+  ruby ./driver.rb quantiles=50 action=dump outfile=dump.csv n_users=30000 n_payments=500000 stddev=0.25
   head -250000 dump.csv > dump.1.csv
   tail -250000 dump.csv > dump.2.csv
   (
@@ -171,7 +171,7 @@ Try it yourself:
 Two output options offer output that may be more interesting or convenient for testing:
 
 * <tt>graph=true</tt> - Rudimentary graph of ECDFs, as "ascii-art"
-* <tt>percentiles=</tt>_number_ - default:100; Group users into more or fewer ECDF intervals than the default 100.  Useful at small values while experimenting with, e.g., the Gaussian parameters, or parallelization timings.  Use of this option angers the Latin-speaking gods of Rome.
+* <tt>quantiles=</tt>_number_ - default:100; Group users into more or fewer ECDF intervals than the default 100.  Useful at small values while experimenting with, e.g., the Gaussian parameters, or parallelization timings.
 
 
 ----------

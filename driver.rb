@@ -45,8 +45,8 @@ class Driver
     end
     
     if [:all, :finish].include? opts.action
-      opts = optify @opts, percentiles:100
-      lt100s, gt100s = ecdfs_per_spending_bucket_for_aggregate_card_preses opts.percentiles, card_preses
+      opts = optify @opts, quantiles:100
+      lt100s, gt100s = ecdfs_per_spending_bucket_for_aggregate_card_preses opts.quantiles, card_preses
       output_ecdfs_for_lt100s_gt100s lt100s, gt100s
       return
     end
